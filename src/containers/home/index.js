@@ -26,7 +26,7 @@ class App extends Component {
 
     handleLogin(e) {
         e.preventDefault();
-        fetch('http://localhost:8000/admin/auth/login', {
+        fetch('http://localhost:8000/api/authenticate-user-login', {
             method: "POST",
             mode: "cors",
             headers: {
@@ -35,12 +35,16 @@ class App extends Component {
             body: JSON.stringify({email: this.state.email, password: this.state.password})
         }).then(res => res.json()
         ).then(response => {
-                console.log(response.api_key);
-                localStorage.setItem('token', response.api_key)
-                this.setState({
-                    'isLoggedIn': true
-                });
-                this.props.history.push('/about-us');
+                if( response.status === 'success' ){
+                    localStorage.setItem('token', response.api_key)
+                    this.setState({
+                        'isLoggedIn': true
+                    });
+                    this.props.history.push('/about-us');
+                }
+                else{
+                    this.props.history.push('/');
+                }
             }
         ).catch(error => {
             console.log(error);
@@ -96,9 +100,9 @@ class App extends Component {
             );
         } else {
             return (
-                <div>
+                <div className="col-md-12">
                     <h1>Welcome Back!</h1>
-                    <Button className={"btn-danger btn-sm"} onClick={this.handleLogout}>logout</Button>
+                    <Button className={"btn-danger btn-sm"} onClick={this.handleLogout}>Logout</Button>
                 </div>
             );
         }

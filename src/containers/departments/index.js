@@ -38,7 +38,6 @@ class App extends Component {
 
         //Load Departments List
         this.listDepartments();
-
         //Load Managers List
         this.loadManagers();
     }
@@ -61,7 +60,7 @@ class App extends Component {
 
     handleUpdate(e) {
         e.preventDefault();
-        fetch('http://localhost:8000/departments/update', {
+        fetch('http://localhost:8000/api/update-department', {
             method: "POST",
             mode: "cors",
             headers: {
@@ -98,7 +97,7 @@ class App extends Component {
 
     handleStore(e) {
         e.preventDefault();
-        fetch('http://localhost:8000/departments/store', {
+        fetch('http://localhost:8000/api/add-department', {
             method: "POST",
             mode: "cors",
             headers: {
@@ -136,7 +135,7 @@ class App extends Component {
         let selected = data.selected;
         let offset = Math.ceil(selected + 1);
 
-        this.setState({offset: offset}, () => {
+        this.setState({offset: offset, selected: selected}, () => {
             this.listDepartments();
         });
     };
@@ -170,7 +169,7 @@ class App extends Component {
     };
 
     listDepartments() {
-        fetch('http://localhost:8000/departments/list?page=' + this.state.offset, {
+        fetch('http://localhost:8000/api/list-departments?page=' + this.state.offset, {
             method: "GET",
             mode: "cors",
             headers: {
@@ -182,7 +181,7 @@ class App extends Component {
                 this.setState({
                     'data': response.items,
                     'total': response.total,
-                    'pageCount': Math.ceil(response.total / 10)
+                    'pageCount': Math.ceil(response.total / 20)
                 });
             }
         ).catch(error => {
@@ -197,7 +196,7 @@ class App extends Component {
     }
 
     oneDepartment() {
-        fetch('http://localhost:8000/departments/one/' + this.state.departmentId, {
+        fetch('http://localhost:8000/api/get-department-data/' + this.state.departmentId, {
             method: "GET",
             mode: "cors",
             headers: {
@@ -220,7 +219,7 @@ class App extends Component {
     }
 
     loadManagers() {
-        fetch('http://localhost:8000/employees/list?per_page=500&managers=true', {
+        fetch('http://localhost:8000/api/load-managers', {
             method: "GET",
             mode: "cors",
             headers: {
@@ -230,7 +229,7 @@ class App extends Component {
         }).then(res => res.json()
         ).then(response => {
                 this.setState({
-                    'managers': response.items
+                    'managers': response
                 });
             }
         ).catch(error => {
@@ -245,8 +244,7 @@ class App extends Component {
                 <td>{department.name}</td>
                 <td>{department.description}</td>
                 <td>{department.office_number}</td>
-                <td>{department.manager.name}</td>
-                <td>{department.employees_count}</td>
+                <td>{department.employee.manager_name}</td>
                 <td>
                     <button className={"btn btn-warning"} onClick={((e) => this.handleShow(e, department.id))}>
                         Edit
@@ -261,35 +259,26 @@ class App extends Component {
                 value={manager.id}>{manager.name}</option>
         );
 
+        const divStyleMinHeight = {
+            'minHeight': '700px'
+          };
+
         return (
-            <div>
+
+            <div className="col-md-12">
                 <div className={'form-inline title'}>
                     <h1>Departments</h1>
                     <button className={"btn btn-primary btn-add"} onClick={((e) => this.handleShowAdd())}>
                         Add
                     </button>
                 </div>
-                <table className={"table table-striped"}>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Office Number</th>
-                        <th>Manager</th>
-                        <th>Employees Count</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {departments}
-                    </tbody>
-                </table>
+                <br></br>
                 <nav aria-label="Page navigation paginate">
                     <ReactPaginate
-                        previousLabel={'previous'}
+                        previousLabel={'Previous'}
                         previousClassName={'page-link'}
                         nextClassName={'page-link'}
-                        nextLabel={'next'}
+                        nextLabel={'Next'}
                         breakLabel={'...'}
                         breakClassName={'page-link'}
                         pageCount={this.state.pageCount}
@@ -301,6 +290,43 @@ class App extends Component {
                         pageClassName={'page-item'}
                         pageLinkClassName={'page-link'}
                         activeClassName={'active'}
+                        forcePage={this.state.selected}
+                    />
+                </nav>
+                <div style={divStyleMinHeight}>
+                    <table className={"table table-striped"}>
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Office Number</th>
+                            <th>Manager</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {departments}
+                        </tbody>
+                    </table>
+                </div>
+                <nav aria-label="Page navigation paginate">
+                    <ReactPaginate
+                        previousLabel={'Previous'}
+                        previousClassName={'page-link'}
+                        nextClassName={'page-link'}
+                        nextLabel={'Next'}
+                        breakLabel={'...'}
+                        breakClassName={'page-link'}
+                        pageCount={this.state.pageCount}
+                        marginPagesDisplayed={2}
+                        pageRangeDisplayed={5}
+                        onPageChange={this.handlePageClick}
+                        containerClassName={'pagination'}
+                        subContainerClassName={'pages pagination'}
+                        pageClassName={'page-item'}
+                        pageLinkClassName={'page-link'}
+                        activeClassName={'active'}
+                        forcePage={this.state.selected}
                     />
                 </nav>
 

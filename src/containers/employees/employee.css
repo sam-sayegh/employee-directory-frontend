@@ -1,0 +1,34 @@
+.paginate {
+    float: right;
+}
+
+.btn-add {
+    float: right;
+    margin-left: 80%;
+}
+
+.jobFilter {
+    width: 295px;
+}
+
+.departmentFilter {
+    width: 295px;
+}
+
+label {
+    margin: 0px 5px;
+}
+
+.btn-filter{
+    margin-left: 10px;
+}
+
+.filters{
+    margin: 20px 0;
+}
+
+.title{
+    background-color: #dddddd;
+    border-radius: 15px;
+    padding-left: 30px;
+}

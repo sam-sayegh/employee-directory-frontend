@@ -1,0 +1,14 @@
+.paginate {
+    float: right;
+}
+
+.btn-add{
+    float: right;
+}
+
+.title{
+    background-color: #dddddd;
+    border-radius: 15px;
+    padding-left: 30px;
+}
+

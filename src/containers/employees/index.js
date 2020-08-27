@@ -430,7 +430,7 @@ class App extends Component {
                 <div className={'form-inline title'}>
                     <h1>Employees</h1>
                     <button className={"btn btn-primary btn-add"} onClick={((e) => this.handleShowAdd())}>
-                        Add
+                        Add Employee
                     </button>
                 </div>
                 <div className={'form-inline filters'}>
@@ -491,7 +491,7 @@ class App extends Component {
                 {/* Modal to Edit Employee */}
                 <Modal show={this.state.show} onHide={this.handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Edit</Modal.Title>
+                        <Modal.Title>Edit Employee</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
@@ -553,7 +553,7 @@ class App extends Component {
                 {/* Modal to Add Employee */}
                 <Modal show={this.state.showAdd} onHide={this.handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Add</Modal.Title>
+                        <Modal.Title>Add Employee</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form>

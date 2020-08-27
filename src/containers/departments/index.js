@@ -244,7 +244,7 @@ class App extends Component {
                 <td>{department.name}</td>
                 <td>{department.description}</td>
                 <td>{department.office_number}</td>
-                <td>{department.employee.manager_name}</td>
+                <td>{!!(department.employee) && !!(department.employee.manager_name)?department.employee.manager_name:""}</td>
                 <td>
                     <button className={"btn btn-warning"} onClick={((e) => this.handleShow(e, department.id))}>
                         Edit

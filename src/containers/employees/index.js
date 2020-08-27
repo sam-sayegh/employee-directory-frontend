@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import ReactPaginate from 'react-paginate';
 import './employee.css';
 import Modal from 'react-bootstrap/Modal';
@@ -19,6 +19,7 @@ class App extends Component {
         this.handleStore = this.handleStore.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
+        this.handleCountryChange = this.handleCountryChange.bind(this);
         this.handleJobTitleChange = this.handleJobTitleChange.bind(this);
         this.handleTitleChange = this.handleTitleChange.bind(this);
         this.handlePhoneNumberChange = this.handlePhoneNumberChange.bind(this);
@@ -26,7 +27,6 @@ class App extends Component {
         this.handleDepartmentChange = this.handleDepartmentChange.bind(this);
         this.handleImageChange = this.handleImageChange.bind(this);
         this.loadDepartments = this.loadDepartments.bind(this);
-        this.loadJobTitles = this.loadJobTitles.bind(this);
         this.filterByJobTitle = this.filterByJobTitle.bind(this);
         this.filterByDepartment = this.filterByDepartment.bind(this);
         this.resetFilter = this.resetFilter.bind(this);
@@ -47,9 +47,14 @@ class App extends Component {
             employeeEmail: '',
             employeeDepartmentId: '',
             departments: [],
-            jobTitles: [],
+            jobTitles: ["Administrative Assistant", "Executive Assistant", "Marketing Manager", "Customer Service Representative", "Nurse Practitioner", "Software Engineer", "Sales Manager", "Data Entry Clerk", "Office Assistant"],
             jobTitleFilter: '',
-            filter: '',
+            filter: {
+                'search_term': '',
+                'job_title': '',
+                'department_id': ''
+            },
+            queryParams: '',
         };
 
         //Load Employees List
@@ -57,105 +62,130 @@ class App extends Component {
 
         //Load Departments List
         this.loadDepartments();
-
-        //Load Departments List
-        this.loadJobTitles();
     }
 
     handleNameChange(event) {
-        this.setState({employeeName: event.target.value});
+        this.setState({ employeeName: event.target.value });
+    }
+
+    handleCountryChange(event) {
+        this.setState({ employeeCountry: event.target.value });
     }
 
     handleJobTitleChange(event) {
-        this.setState({employeeJobTitle: event.target.value});
+        this.setState({ employeeJobTitle: event.target.value });
     }
 
     handlePhoneNumberChange(event) {
-        this.setState({employeePhoneNumber: event.target.value});
+        this.setState({ employeePhoneNumber: event.target.value });
     }
 
     handleEmailChange(event) {
-        this.setState({employeeEmail: event.target.value});
+        this.setState({ employeeEmail: event.target.value });
     }
 
     handleTitleChange(event) {
-        this.setState({employeeTitle: event.target.value});
+        this.setState({ employeeTitle: event.target.value });
     }
 
     filterByJobTitle(event) {
-        this.setState({offset: 1, filter: ''});
-        this.setState({filter: this.state.filter + '&job_title=' + event.target.value}, () => {
+        this.setState({ offset: 1, selected: 0 });
+        this.state.filter.job_title = event.target.value;
+        let queryParams = '&' + Object.keys(this.state.filter).map(key => key + '=' + this.state.filter[key]).join('&');
+        this.setState({ queryParams: queryParams, selected: 0 }, () => {
             this.listEmployees();
         });
     }
 
     filterByDepartment(event) {
-        this.setState({offset: 1, filter: ''});
-        this.setState({filter: this.state.filter + '&department_id=' + event.target.value}, () => {
+        this.setState({ offset: 1, selected: 0 });
+        this.state.filter.department_id = event.target.value;
+        let queryParams = '&' + Object.keys(this.state.filter).map(key => key + '=' + this.state.filter[key]).join('&');
+        this.setState({ queryParams: queryParams, selected: 0 }, () => {
             this.listEmployees();
         });
     }
 
     handleSearch(event) {
-        this.setState({filter: this.state.filter + '&term=' + event.target.value}, () => {
+        this.setState({ offset: 1, selected: 0 });
+        this.state.filter.search_term = event.target.value;
+        let queryParams = '&' + Object.keys(this.state.filter).map(key => key + '=' + this.state.filter[key]).join('&');
+        this.setState({ queryParams: queryParams, selected: 0 }, () => {
             this.listEmployees();
         });
     }
 
     resetFilter() {
-        this.setState({filter: ''}, () => {
+        this.state.filter = {
+            'search_term': '',
+            'job_title': '',
+            'department_id': ''
+        };
+        this.setState({ filter: this.state.filter, queryParams: '' }, () => {
             this.listEmployees();
         });
     }
 
     handleDepartmentChange(event) {
-        this.setState({employeeDepartmentId: event.target.value});
+        this.setState({ employeeDepartmentId: event.target.value });
     }
 
     handleImageChange = event => {
-        this.setState({employeeImage: event.target.files[0]})
+        this.setState({ employeeImage: event.target.files[0] })
     }
 
     handleUpdate(e) {
         e.preventDefault();
 
-        let formData = new FormData();
-        formData.append('employee_id', this.state.employeeId);
-        formData.append('name', this.state.employeeName);
-        formData.append('title', this.state.employeeTitle);
-        formData.append('job_title', this.state.employeeJobTitle);
-        formData.append('phone_number', this.state.employeePhoneNumber);
-        formData.append('email', this.state.employeeEmail);
-        formData.append('image', this.state.employeeImage);
-        formData.append('department_id', this.state.employeeDepartmentId);
+        // let formData = new FormData();
+        // formData.append('employee_id', this.state.employeeId);
+        // formData.append('name', this.state.employeeName);
+        // formData.append('country', this.state.employeeCountry);
+        // formData.append('title', this.state.employeeTitle);
+        // formData.append('job_title', this.state.employeeJobTitle);
+        // formData.append('phone', this.state.employeePhoneNumber);
+        // formData.append('email', this.state.employeeEmail);
+        // formData.append('picture', this.state.employeeImage);
+        // formData.append('department_id', this.state.employeeDepartmentId);
 
-        fetch('http://localhost:8000/employees/update', {
+        fetch('http://localhost:8000/api/update-employee', {
             method: "POST",
             mode: "cors",
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                "Content-Type": "application/json"
             },
-            body: formData
+            body: JSON.stringify({
+                employee_id: this.state.employeeId,
+                name: this.state.employeeName,
+                country: this.state.employeeCountry,
+                title: this.state.employeeTitle,
+                job_title: this.state.employeeJobTitle,
+                phone: this.state.employeePhoneNumber,
+                email: this.state.employeeEmail,
+                department_id: this.state.employeeDepartmentId
+            })
         }).then(res => res.json()
         ).then(response => {
-                if (response.status === 'failed') {
-                    alert(JSON.stringify(response.items));
-                } else {
-                    this.setState({
-                        'employeeId': response.id,
-                        'employeeTitle': response.title,
-                        'employeeName': response.name,
-                        'employeeJobTitle': response.job_title,
-                        'employeePhoneNumber': response.phone_number,
-                        'employeeEmail': response.email,
-                        'employeeDepartmentId': response.department_id,
-                        'employeeImage': response.image,
-                    });
-                    this.handleClose();
-                    this.listEmployees();
-                }
-
+            if (response.status === 'failed') {
+                alert(JSON.stringify(response.items));
+            } else {
+                this.setState({
+                    'employeeId': response.id,
+                    'employeeTitle': response.title,
+                    'employeeName': response.name,
+                    'employeeCountry': response.country,
+                    'employeeJobTitle': response.job_title,
+                    'employeePhoneNumber': response.phone,
+                    'employeeEmail': response.email,
+                    'employeeDepartmentId': response.department_id,
+                    //'employeeImage': response.picture,
+                });
+                this.handleClose();
+                this.listEmployees();
             }
+
+        }
         ).catch(error => {
             console.log(error);
             console.log("Can’t access API response. Blocked by browser?");
@@ -165,41 +195,51 @@ class App extends Component {
     handleStore(e) {
         e.preventDefault();
 
-        let formData = new FormData();
-        formData.append('name', this.state.employeeName);
-        formData.append('title', this.state.employeeTitle);
-        formData.append('job_title', this.state.employeeJobTitle);
-        formData.append('phone_number', this.state.employeePhoneNumber);
-        formData.append('email', this.state.employeeEmail);
-        formData.append('image', this.state.employeeImage);
-        formData.append('department_id', this.state.employeeDepartmentId);
+        // let formData = new FormData();
+        // formData.append('name', this.state.employeeName);
+        // formData.append('title', this.state.employeeTitle);
+        // formData.append('job_title', this.state.employeeJobTitle);
+        // formData.append('phone', this.state.employeePhoneNumber);
+        // formData.append('email', this.state.employeeEmail);
+        // formData.append('picture', this.state.employeeImage);
+        // formData.append('department_id', this.state.employeeDepartmentId);
 
-        fetch('http://localhost:8000/employees/store', {
+        fetch('http://localhost:8000/api/add-employee', {
             method: "POST",
             mode: "cors",
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                "Content-Type": "application/json"
             },
-            body: formData
+            body: JSON.stringify({
+                employee_id: this.state.employeeId,
+                name: this.state.employeeName,
+                country: this.state.employeeCountry,
+                title: this.state.employeeTitle,
+                job_title: this.state.employeeJobTitle,
+                phone: this.state.employeePhoneNumber,
+                email: this.state.employeeEmail,
+                department_id: this.state.employeeDepartmentId
+            })
         }).then(res => res.json()
         ).then(response => {
-                if (response.status === 'failed') {
-                    alert(JSON.stringify(response.items));
-                } else {
-                    this.setState({
-                        'employeeId': response.id,
-                        'employeeTitle': response.title,
-                        'employeeName': response.name,
-                        'employeeJobTitle': response.job_title,
-                        'employeePhoneNumber': response.phone_number,
-                        'employeeEmail': response.email,
-                        'employeeDepartmentId': response.department_id,
-                        'employeeImage': response.image,
-                    });
-                    this.handleClose();
-                    this.listEmployees();
-                }
+            if (response.status === 'failed') {
+                alert(JSON.stringify(response.items));
+            } else {
+                this.setState({
+                    'employeeId': response.id,
+                    'employeeTitle': response.title,
+                    'employeeName': response.name,
+                    'employeeJobTitle': response.job_title,
+                    'employeePhoneNumber': response.phone,
+                    'employeeEmail': response.email,
+                    'employeeDepartmentId': response.department_id,
+                    'employeeImage': response.picture,
+                });
+                this.handleClose();
+                this.listEmployees();
             }
+        }
         ).catch(error => {
             console.log(error);
             console.log("Can’t access API response. Blocked by browser?");
@@ -210,7 +250,7 @@ class App extends Component {
         let selected = data.selected;
         let offset = Math.ceil(selected + 1);
 
-        this.setState({offset: offset}, () => {
+        this.setState({ offset: offset, selected: selected }, () => {
             this.listEmployees();
         });
     };
@@ -235,6 +275,17 @@ class App extends Component {
         );
     };
 
+    handleDelete = (e, data) => {
+        this.setState(
+            {
+                'employeeId': data,
+            },
+            () => {
+                this.deleteEmployee(e);
+            }
+        );
+    };
+
     handleShowAdd = () => {
         this.setState(
             {
@@ -244,7 +295,7 @@ class App extends Component {
     };
 
     listEmployees() {
-        fetch('http://localhost:8000/employees/list?per_page=50&page=' + this.state.offset + this.state.filter, {
+        fetch('http://localhost:8000/api/list-employees?page=' + this.state.offset + this.state.queryParams, {
             method: "GET",
             mode: "cors",
             headers: {
@@ -253,12 +304,12 @@ class App extends Component {
             }
         }).then(res => res.json()
         ).then(response => {
-                this.setState({
-                    'data': response.items,
-                    'total': response.total,
-                    'pageCount': Math.ceil(response.total / 50)
-                });
-            }
+            this.setState({
+                'data': response.items,
+                'total': response.total,
+                'pageCount': Math.ceil(response.total / 20)
+            });
+        }
         ).catch(error => {
             console.log(error);
             console.log("Can’t access API response. Blocked by browser?");
@@ -271,7 +322,7 @@ class App extends Component {
     }
 
     oneEmployee() {
-        fetch('http://localhost:8000/employees/one/' + this.state.employeeId, {
+        fetch('http://localhost:8000/api/get-employee-data/' + this.state.employeeId, {
             method: "GET",
             mode: "cors",
             headers: {
@@ -280,17 +331,37 @@ class App extends Component {
             }
         }).then(res => res.json()
         ).then(response => {
-                this.setState({
-                    'employeeId': response.id,
-                    'employeeTitle': response.title,
-                    'employeeName': response.name,
-                    'employeeJobTitle': response.job_title,
-                    'employeePhoneNumber': response.phone_number,
-                    'employeeEmail': response.email,
-                    'employeeDepartmentId': response.department_id,
-                    'employeeImage': response.image,
-                });
+            this.setState({
+                'employeeId': response.id,
+                'employeeTitle': response.title,
+                'employeeName': response.name,
+                'employeeJobTitle': response.job_title,
+                'employeePhoneNumber': response.phone,
+                'employeeEmail': response.email,
+                'employeeDepartmentId': response.department_id,
+                'employeeCountry': response.country,
+                'employeeImage': response.picture,
+            });
+        }
+        ).catch(error => {
+            console.log(error);
+            console.log("Can’t access API response. Blocked by browser?");
+        });
+    }
+
+    deleteEmployee() {
+        fetch('http://localhost:8000/api/delete-employee/' + this.state.employeeId, {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                "Content-Type": "application/json"
             }
+        }).then(res => res.json()
+        ).then(response => {
+            this.setState({ offset: 1, selected: 0 });
+            this.listEmployees();
+        }
         ).catch(error => {
             console.log(error);
             console.log("Can’t access API response. Blocked by browser?");
@@ -298,7 +369,7 @@ class App extends Component {
     }
 
     loadDepartments() {
-        fetch('http://localhost:8000/departments/list?per_page=500', {
+        fetch('http://localhost:8000/api/list-all-departments', {
             method: "GET",
             mode: "cors",
             headers: {
@@ -307,30 +378,10 @@ class App extends Component {
             }
         }).then(res => res.json()
         ).then(response => {
-                this.setState({
-                    'departments': response.items
-                });
-            }
-        ).catch(error => {
-            console.log(error);
-            console.log("Can’t access API response. Blocked by browser?");
-        });
-    }
-
-    loadJobTitles() {
-        fetch('http://localhost:8000/employees/job-titles', {
-            method: "GET",
-            mode: "cors",
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
-                "Content-Type": "application/json"
-            }
-        }).then(res => res.json()
-        ).then(response => {
-                this.setState({
-                    'jobTitles': response
-                });
-            }
+            this.setState({
+                'departments': response
+            });
+        }
         ).catch(error => {
             console.log(error);
             console.log("Can’t access API response. Blocked by browser?");
@@ -341,15 +392,21 @@ class App extends Component {
     render() {
         const employees = this.state.data.map((employee, key) =>
             <tr key={key}>
-                <td><Image src={employee.image} alt={employee.name} width={'50px'} rounded/></td>
-                <td>{employee.title} {employee.name}</td>
+                <td><Image src={employee.picture} alt={employee.name} width={'50px'} rounded /></td>
+                <td>{employee.name}</td>
+                <td>{employee.country}</td>
                 <td>{employee.job_title}</td>
                 <td>{employee.email}</td>
-                <td>{employee.phone_number}</td>
-                <td>{employee.department.name}</td>
+                <td>{employee.phone}</td>
+                <td>{employee.department.department_name}</td>
                 <td>
                     <button className={"btn btn-warning"} onClick={((e) => this.handleShow(e, employee.id))}>
                         Edit
+                    </button>
+                </td>
+                <td>
+                    <button className={"btn btn-danger"} onClick={((e) => { if(window.confirm('Are you sure you want to delete this employee?')){this.handleDelete(e, employee.id)};})}>
+                        Delete
                     </button>
                 </td>
             </tr>
@@ -367,7 +424,7 @@ class App extends Component {
                 key={key}>{jobTitle}</option>
         );
         return (
-            <div>
+            <div className="col-md-12">
                 <div className={'form-inline title'}>
                     <h1>Employees</h1>
                     <button className={"btn btn-primary btn-add"} onClick={((e) => this.handleShowAdd())}>
@@ -376,7 +433,7 @@ class App extends Component {
                 </div>
                 <div className={'form-inline filters'}>
                     <label>Search </label>
-                    <input type={'text'} name={'term'} placeholder={'Search'} onChange={this.handleSearch}/>
+                    <input type={'text'} name={'term'} placeholder={'Search'} onChange={this.handleSearch} />
                     <label>Job Title</label>
                     <select onChange={this.filterByJobTitle} className={'jobFilter'}>
                         {jobTitles}
@@ -385,22 +442,43 @@ class App extends Component {
                     <select onChange={this.filterByDepartment} className={'departmentFilter'}>
                         {departments}
                     </select>
-                    <button className={'btn btn-info btn-sm btn-filter'} onClick={this.resetFilter}>reset</button>
+                    <button className={'btn btn-info btn-sm btn-filter'} onClick={this.resetFilter}>Reset</button>
                 </div>
+                <nav aria-label="Page navigation paginate">
+                    <ReactPaginate
+                        previousLabel={'previous'}
+                        previousClassName={'page-link'}
+                        nextClassName={'page-link'}
+                        nextLabel={'next'}
+                        breakLabel={'...'}
+                        breakClassName={'page-link'}
+                        pageCount={this.state.pageCount}
+                        marginPagesDisplayed={2}
+                        pageRangeDisplayed={5}
+                        onPageChange={this.handlePageClick}
+                        containerClassName={'pagination'}
+                        subContainerClassName={'pages pagination'}
+                        pageClassName={'page-item'}
+                        pageLinkClassName={'page-link'}
+                        activeClassName={'active'}
+                        forcePage={this.state.selected}
+                    />
+                </nav>
                 <table className={"table table-striped"}>
                     <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Job Title</th>
-                        <th>Email</th>
-                        <th>Phone Number</th>
-                        <th>Department</th>
-                        <th>Actions</th>
-                    </tr>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Country</th>
+                            <th>Job Title</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Department</th>
+                            <th>Actions</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {employees}
+                        {employees}
                     </tbody>
                 </table>
                 <nav aria-label="Page navigation paginate">
@@ -420,6 +498,7 @@ class App extends Component {
                         pageClassName={'page-item'}
                         pageLinkClassName={'page-link'}
                         activeClassName={'active'}
+                        forcePage={this.state.selected}
                     />
                 </nav>
 
@@ -431,59 +510,48 @@ class App extends Component {
                     <Modal.Body>
                         <Form>
                             <Form.Group controlId="formGroupName">
-                                <Form.Label>Title</Form.Label>
-                                <Form.Control as="select" onChange={this.handleTitleChange}
-                                              value={this.state.employeeTitle}>
-                                    <option value={'Dr.'} key={1}>Dr.
-                                    </option>
-                                    <option value={'Mr.'} key={2}>Mr.
-                                    </option>
-                                    <option value={'Prof.'} key={3}>Prof.
-                                    </option>
-                                    <option value={'Ms.'} key={4}>Ms.
-                                    </option>
-                                    <option value={'Miss'} key={5}>Miss
-                                    </option>
-                                    <option value={'Mrs.'} key={6}>Mrs.
-                                    </option>
-                                </Form.Control>
-                            </Form.Group>
-                            <Form.Group controlId="formGroupName">
                                 <Form.Label>Name</Form.Label>
                                 <Form.Control type="text" placeholder="Name" onChange={this.handleNameChange}
-                                              value={this.state.employeeName || ''}/>
+                                    value={this.state.employeeName || ''} />
                             </Form.Group>
-                            <Form.Group controlId="formGroupDescription">
+                            <Form.Group controlId="formGroupName">
+                                <Form.Label>Country</Form.Label>
+                                <Form.Control type="text" placeholder="Country" onChange={this.handleCountryChange}
+                                    value={this.state.employeeCountry || ''} />
+                            </Form.Group>
+                            <Form.Group controlId="formGroupOfficeManager">
                                 <Form.Label>Job Title</Form.Label>
-                                <Form.Control type="text" placeholder="Job Title" onChange={this.handleJobTitleChange}
-                                              value={this.state.employeeJobTitle || ''}/>
+                                <Form.Control as="select" onChange={this.handleJobTitleChange}
+                                    value={this.state.employeeJobTitle || ''}>
+                                    {jobTitles}
+                                </Form.Control>
                             </Form.Group>
                             <Form.Group controlId="formGroupOfficeNumber">
                                 <Form.Label>Phone Number</Form.Label>
                                 <Form.Control type="text" placeholder="Phone Number"
-                                              onChange={this.handlePhoneNumberChange}
-                                              value={this.state.employeePhoneNumber || ''}/>
+                                    onChange={this.handlePhoneNumberChange}
+                                    value={this.state.employeePhoneNumber || ''} />
                             </Form.Group>
 
                             <Form.Group controlId="formGroupEmail">
                                 <Form.Label>Email</Form.Label>
                                 <Form.Control type="email" placeholder="Email"
-                                              onChange={this.handleEmailChange}
-                                              value={this.state.employeeEmail || ''}/>
+                                    onChange={this.handleEmailChange}
+                                    value={this.state.employeeEmail || ''} />
                             </Form.Group>
                             <Form.Group controlId="formGroupOfficeManager">
-                                <Form.Label>Manager</Form.Label>
+                                <Form.Label>Department</Form.Label>
                                 <Form.Control as="select" onChange={this.handleDepartmentChange}
-                                              value={this.state.employeeDepartmentId || ''}>
+                                    value={this.state.employeeDepartmentId || ''}>
                                     {departments}
                                 </Form.Control>
                             </Form.Group>
-                            <Form.Group controlId="formGroupImage">
+                            {/* <Form.Group controlId="formGroupImage">
                                 <Form.Label>Image</Form.Label>
                                 <Form.Control type="file" onChange={this.handleImageChange}
-                                              filename={this.state.employeeImage || ''}>
+                                    filename={this.state.employeeImage || ''}>
                                 </Form.Control>
-                            </Form.Group>
+                            </Form.Group> */}
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
@@ -504,46 +572,42 @@ class App extends Component {
                     <Modal.Body>
                         <Form>
                             <Form.Group controlId="formGroupName">
-                                <Form.Label>Title</Form.Label>
-                                <Form.Control as="select" onChange={this.handleTitleChange} value={'Dr.'} required>
-                                    <option value={'Dr.'} key={1}>Dr.</option>
-                                    <option value={'Mr.'} key={2}>Mr.</option>
-                                    <option value={'Prof.'} key={3}>Prof.</option>
-                                    <option value={'Ms.'} key={4}>Ms.</option>
-                                    <option value={'Miss'} key={5}>Miss</option>
-                                    <option value={'Mrs.'} key={6}>Mrs.</option>
-                                </Form.Control>
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control type="text" placeholder="Name" onChange={this.handleNameChange} required />
                             </Form.Group>
                             <Form.Group controlId="formGroupName">
-                                <Form.Label>Name</Form.Label>
-                                <Form.Control type="text" placeholder="Name" onChange={this.handleNameChange} required/>
+                                <Form.Label>Country</Form.Label>
+                                <Form.Control type="text" placeholder="Country" onChange={this.handleCountryChange}
+                                    value={this.state.employeeCountry || ''} />
                             </Form.Group>
-                            <Form.Group controlId="formGroupDescription">
+                            <Form.Group controlId="formGroupOfficeManager">
                                 <Form.Label>Job Title</Form.Label>
-                                <Form.Control type="text" placeholder="Job Title" onChange={this.handleJobTitleChange}/>
+                                <Form.Control as="select" onChange={this.handleJobTitleChange}
+                                    value={this.state.employeeJobTitle || ''}>
+                                    {jobTitles}
+                                </Form.Control>
                             </Form.Group>
                             <Form.Group controlId="formGroupOfficeNumber">
                                 <Form.Label>Phone Number</Form.Label>
                                 <Form.Control type="text" placeholder="Phone Number"
-                                              onChange={this.handlePhoneNumberChange}/>
+                                    onChange={this.handlePhoneNumberChange} />
                             </Form.Group>
-
                             <Form.Group controlId="formGroupEmail">
                                 <Form.Label>Email</Form.Label>
                                 <Form.Control type="email" placeholder="Email"
-                                              onChange={this.handleEmailChange}/>
+                                    onChange={this.handleEmailChange} />
                             </Form.Group>
                             <Form.Group controlId="formGroupOfficeManager">
-                                <Form.Label>Manager</Form.Label>
+                                <Form.Label>Department</Form.Label>
                                 <Form.Control as="select" onChange={this.handleDepartmentChange}>
                                     {departments}
                                 </Form.Control>
                             </Form.Group>
-                            <Form.Group controlId="formGroupImage">
+                            {/* <Form.Group controlId="formGroupImage">
                                 <Form.Label>Image</Form.Label>
                                 <Form.Control type="file" onChange={this.handleImageChange}>
                                 </Form.Control>
-                            </Form.Group>
+                            </Form.Group> */}
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>

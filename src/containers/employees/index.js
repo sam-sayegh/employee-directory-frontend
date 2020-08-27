@@ -405,7 +405,7 @@ class App extends Component {
                     </button>
                 </td>
                 <td>
-                    <button className={"btn btn-danger"} onClick={((e) => { if(window.confirm('Are you sure you want to delete this employee?')){this.handleDelete(e, employee.id)};})}>
+                    <button className={"btn btn-danger"} onClick={((e) => { if (window.confirm('Are you sure you want to delete this employee?')) { this.handleDelete(e, employee.id) }; })}>
                         Delete
                     </button>
                 </td>
@@ -446,10 +446,10 @@ class App extends Component {
                 </div>
                 <nav aria-label="Page navigation paginate">
                     <ReactPaginate
-                        previousLabel={'previous'}
+                        previousLabel={'Previous'}
                         previousClassName={'page-link'}
                         nextClassName={'page-link'}
-                        nextLabel={'next'}
+                        nextLabel={'Next'}
                         breakLabel={'...'}
                         breakClassName={'page-link'}
                         pageCount={this.state.pageCount}
@@ -483,10 +483,10 @@ class App extends Component {
                 </table>
                 <nav aria-label="Page navigation paginate">
                     <ReactPaginate
-                        previousLabel={'previous'}
+                        previousLabel={'Previous'}
                         previousClassName={'page-link'}
                         nextClassName={'page-link'}
-                        nextLabel={'next'}
+                        nextLabel={'Next'}
                         breakLabel={'...'}
                         breakClassName={'page-link'}
                         pageCount={this.state.pageCount}

@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import ReactPaginate from 'react-paginate';
 import './department.css';
 import Modal from 'react-bootstrap/Modal';
@@ -43,19 +43,19 @@ class App extends Component {
     }
 
     handleNameChange(event) {
-        this.setState({departmentName: event.target.value});
+        this.setState({ departmentName: event.target.value });
     }
 
     handleDescriptionChange(event) {
-        this.setState({departmentDescription: event.target.value});
+        this.setState({ departmentDescription: event.target.value });
     }
 
     handleOfficeNumberChange(event) {
-        this.setState({departmentOfficeNumber: event.target.value});
+        this.setState({ departmentOfficeNumber: event.target.value });
     }
 
     handleManagerChange(event) {
-        this.setState({departmentManagerId: event.target.value});
+        this.setState({ departmentManagerId: event.target.value });
     }
 
     handleUpdate(e) {
@@ -76,19 +76,19 @@ class App extends Component {
             })
         }).then(res => res.json()
         ).then(response => {
-                if (response.status === 'failed') {
-                    alert(JSON.stringify(response.items));
-                } else {
-                    this.setState({
-                        'departmentName': response.name,
-                        'departmentDescription': response.description,
-                        'departmentOfficeNumber': response.office_number,
-                        'departmentManagerId': response.manager_id,
-                    });
-                    this.handleClose();
-                    this.listDepartments();
-                }
+            if (response.status === 'failed') {
+                alert(JSON.stringify(response.items));
+            } else {
+                this.setState({
+                    'departmentName': response.name,
+                    'departmentDescription': response.description,
+                    'departmentOfficeNumber': response.office_number,
+                    'departmentManagerId': response.manager_id,
+                });
+                this.handleClose();
+                this.listDepartments();
             }
+        }
         ).catch(error => {
             console.log(error);
             console.log("Can’t access API response. Blocked by browser?");
@@ -112,19 +112,19 @@ class App extends Component {
             })
         }).then(res => res.json()
         ).then(response => {
-                if (response.status === 'failed') {
-                    alert(JSON.stringify(response.items));
-                } else {
-                    this.setState({
-                        'departmentName': response.name,
-                        'departmentDescription': response.description,
-                        'departmentOfficeNumber': response.office_number,
-                        'departmentManagerId': response.manager_id,
-                    });
-                    this.handleClose();
-                    this.listDepartments();
-                }
+            if (response.status === 'failed') {
+                alert(JSON.stringify(response.items));
+            } else {
+                this.setState({
+                    'departmentName': response.name,
+                    'departmentDescription': response.description,
+                    'departmentOfficeNumber': response.office_number,
+                    'departmentManagerId': response.manager_id,
+                });
+                this.handleClose();
+                this.listDepartments();
             }
+        }
         ).catch(error => {
             console.log(error);
             console.log("Can’t access API response. Blocked by browser?");
@@ -135,7 +135,7 @@ class App extends Component {
         let selected = data.selected;
         let offset = Math.ceil(selected + 1);
 
-        this.setState({offset: offset, selected: selected}, () => {
+        this.setState({ offset: offset, selected: selected }, () => {
             this.listDepartments();
         });
     };
@@ -178,12 +178,12 @@ class App extends Component {
             }
         }).then(res => res.json()
         ).then(response => {
-                this.setState({
-                    'data': response.items,
-                    'total': response.total,
-                    'pageCount': Math.ceil(response.total / 20)
-                });
-            }
+            this.setState({
+                'data': response.items,
+                'total': response.total,
+                'pageCount': Math.ceil(response.total / 20)
+            });
+        }
         ).catch(error => {
             console.log(error);
             console.log("Can’t access API response. Blocked by browser?");
@@ -205,13 +205,13 @@ class App extends Component {
             }
         }).then(res => res.json()
         ).then(response => {
-                this.setState({
-                    'departmentName': response.name,
-                    'departmentDescription': response.description,
-                    'departmentOfficeNumber': response.office_number,
-                    'departmentManagerId': response.manager_id,
-                });
-            }
+            this.setState({
+                'departmentName': response.name,
+                'departmentDescription': response.description,
+                'departmentOfficeNumber': response.office_number,
+                'departmentManagerId': response.manager_id,
+            });
+        }
         ).catch(error => {
             console.log(error);
             console.log("Can’t access API response. Blocked by browser?");
@@ -228,10 +228,10 @@ class App extends Component {
             }
         }).then(res => res.json()
         ).then(response => {
-                this.setState({
-                    'managers': response
-                });
-            }
+            this.setState({
+                'managers': response
+            });
+        }
         ).catch(error => {
             console.log(error);
             console.log("Can’t access API response. Blocked by browser?");
@@ -244,7 +244,7 @@ class App extends Component {
                 <td>{department.name}</td>
                 <td>{department.description}</td>
                 <td>{department.office_number}</td>
-                <td>{!!(department.employee) && !!(department.employee.manager_name)?department.employee.manager_name:""}</td>
+                <td>{!!(department.employee) && !!(department.employee.manager_name) ? department.employee.manager_name : ""}</td>
                 <td>
                     <button className={"btn btn-warning"} onClick={((e) => this.handleShow(e, department.id))}>
                         Edit
@@ -261,7 +261,7 @@ class App extends Component {
 
         const divStyleMinHeight = {
             'minHeight': '700px'
-          };
+        };
 
         return (
 
@@ -296,16 +296,16 @@ class App extends Component {
                 <div style={divStyleMinHeight}>
                     <table className={"table table-striped"}>
                         <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Office Number</th>
-                            <th>Manager</th>
-                            <th>Actions</th>
-                        </tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Office Number</th>
+                                <th>Manager</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {departments}
+                            {departments}
                         </tbody>
                     </table>
                 </div>
@@ -340,19 +340,19 @@ class App extends Component {
                             <Form.Group controlId="formGroupName">
                                 <Form.Label>Name</Form.Label>
                                 <Form.Control type="text" placeholder="Name" onChange={this.handleNameChange}
-                                              value={this.state.departmentName || ''}/>
+                                    value={this.state.departmentName || ''} />
                             </Form.Group>
                             <Form.Group controlId="formGroupDescription">
                                 <Form.Label>Description</Form.Label>
                                 <Form.Control as="textarea" rows="3" placeholder="Description"
-                                              onChange={this.handleDescriptionChange}
-                                              value={this.state.departmentDescription || ''}/>
+                                    onChange={this.handleDescriptionChange}
+                                    value={this.state.departmentDescription || ''} />
                             </Form.Group>
                             <Form.Group controlId="formGroupOfficeNumber">
                                 <Form.Label>Office Number</Form.Label>
                                 <Form.Control type="text" placeholder="Office Number"
-                                              onChange={this.handleOfficeNumberChange}
-                                              value={this.state.departmentOfficeNumber || ''}/>
+                                    onChange={this.handleOfficeNumberChange}
+                                    value={this.state.departmentOfficeNumber || ''} />
                             </Form.Group>
                             <Form.Group controlId="formGroupOfficeManager">
                                 <Form.Label>Manager</Form.Label>
@@ -382,17 +382,17 @@ class App extends Component {
                         <Form>
                             <Form.Group controlId="formGroupName">
                                 <Form.Label>Name</Form.Label>
-                                <Form.Control type="text" placeholder="Name" onChange={this.handleNameChange}/>
+                                <Form.Control type="text" placeholder="Name" onChange={this.handleNameChange} />
                             </Form.Group>
                             <Form.Group controlId="formGroupDescription">
                                 <Form.Label>Description</Form.Label>
                                 <Form.Control as="textarea" rows="3" placeholder="Description"
-                                              onChange={this.handleDescriptionChange}/>
+                                    onChange={this.handleDescriptionChange} />
                             </Form.Group>
                             <Form.Group controlId="formGroupOfficeNumber">
                                 <Form.Label>Office Number</Form.Label>
                                 <Form.Control type="text" placeholder="Office Number"
-                                              onChange={this.handleOfficeNumberChange}/>
+                                    onChange={this.handleOfficeNumberChange} />
                             </Form.Group>
                             <Form.Group controlId="formGroupOfficeManager">
                                 <Form.Label>Manager</Form.Label>

@@ -38,6 +38,7 @@ class App extends Component {
             employeeData: [],
             offset: 0,
             total: 0,
+            subtotal: 0,
             employeeId: 0,
             employeeName: '',
             employeeTitle: '',
@@ -307,6 +308,7 @@ class App extends Component {
             this.setState({
                 'data': response.items,
                 'total': response.total,
+                'subtotal': response.items.length,
                 'pageCount': Math.ceil(response.total / 20)
             });
         }
@@ -444,26 +446,10 @@ class App extends Component {
                     </select>
                     <button className={'btn btn-info btn-sm btn-filter'} onClick={this.resetFilter}>Reset</button>
                 </div>
-                <nav aria-label="Page navigation paginate">
-                    <ReactPaginate
-                        previousLabel={'Previous'}
-                        previousClassName={'page-link'}
-                        nextClassName={'page-link'}
-                        nextLabel={'Next'}
-                        breakLabel={'...'}
-                        breakClassName={'page-link'}
-                        pageCount={this.state.pageCount}
-                        marginPagesDisplayed={2}
-                        pageRangeDisplayed={5}
-                        onPageChange={this.handlePageClick}
-                        containerClassName={'pagination'}
-                        subContainerClassName={'pages pagination'}
-                        pageClassName={'page-item'}
-                        pageLinkClassName={'page-link'}
-                        activeClassName={'active'}
-                        forcePage={this.state.selected}
-                    />
-                </nav>
+                <div className={'form-inline filters'}>
+                    <label>Showing &nbsp;<b>{this.state.subtotal}</b>&nbsp; out of &nbsp;<b>{this.state.total}</b>&nbsp; Employees</label>
+                </div>
+                <br></br>
                 <table className={"table table-striped"}>
                     <thead>
                         <tr>

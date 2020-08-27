@@ -40,7 +40,7 @@ class App extends Component {
                     this.setState({
                         'isLoggedIn': true
                     });
-                    this.props.history.push('/about-us');
+                    this.props.history.push('/employees');
                 }
                 else{
                     this.props.history.push('/');

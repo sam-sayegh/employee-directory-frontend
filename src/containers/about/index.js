@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const About = () => (
   <div className="col-md-12">
@@ -7,4 +7,4 @@ const About = () => (
   </div>
 );
 
-export default About
+export default About;

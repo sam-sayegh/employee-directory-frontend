@@ -439,11 +439,11 @@ class App extends Component {
         </div>
         <div className="form-inline filters">
           <label>
-            Showing &nbsp;
+            Showing&nbsp;
             <b>{this.state.subtotal}</b>
-&nbsp; out of &nbsp;
+            &nbsp;out of&nbsp;
             <b>{this.state.total}</b>
-&nbsp; Employees
+            &nbsp;Employees
           </label>
         </div>
         <br />

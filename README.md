@@ -11,4 +11,5 @@ Implementation of employee directory frontend using react
 
 ## Get started
 1. npm start
+2. Username: admin@admin.com -- Password: Test@123
 
